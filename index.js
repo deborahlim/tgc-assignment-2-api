@@ -4,7 +4,7 @@ require("dotenv").config();
 const ObjectId = require("mongodb").ObjectId;
 const MongoUtil = require("./MongoUtil");
 const { Db } = require("mongodb");
-
+const jwt = require("jsonwebtoken");
 const mongoUri = process.env.MONGO_URI;
 
 let app = express();
@@ -21,18 +21,17 @@ async function main() {
 
 main();
 
+// ROUTES
+
 app.get("/special-connections", (req, res, next) => {
   res.status(200).send();
   console.log("Root");
 });
 
-app.get("/special-connections/users", (req, res, next) => {
-  res.status(200).send();
-});
-
+// CREATE A USER
 app.post("/special-connections/signup", async (req, res, next) => {
   try {
-    let name = req.body.name;
+    let username = req.body.username;
     let email = req.body.email;
     let password = req.body.password;
     let confirmPassword = req.body.password;
@@ -40,13 +39,26 @@ app.post("/special-connections/signup", async (req, res, next) => {
     let db = MongoUtil.getDB();
     // tell mongo to insert the document
     let result = await db.collection("users").insertOne({
-      name: name,
+      username: username,
       email: email,
       password: password,
       confirmPassword: confirmPassword,
     });
-    res.status(200);
-    res.send(result);
+    console.log(result);
+    const token = jwt.sign(
+      { _id: ObjectId(result._id) },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      }
+    );
+
+    res.status(201).json({
+      token,
+      data: {
+        user: result,
+      },
+    });
   } catch (e) {
     res.status(500);
     res.send({
