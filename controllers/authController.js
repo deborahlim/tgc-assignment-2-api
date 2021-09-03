@@ -45,39 +45,40 @@ exports.joinUs = async (req, res, next) => {
   }
 };
 
-exports.login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    let db = MongoUtil.getDB();
-    //   Check if the email & password exists
-    if (!email || !password) {
-      return errorResponse(res, "Email and Password cannot be empty", 400);
-    }
-
-    // Check if email and password is valid
-    const user = await db.collection("users").findOne({
-      email,
-      password,
-    });
-
-    if (!user) {
-      return errorResponse(res, "Incorrect email or password", 401);
-    }
-
-    const token = signToken(user._id);
-
-    res.status(200).json({
-      status: "success",
-      token,
-    });
-  } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+exports.login = async (req, res) => {
+  // try {
+  const { email, password } = req.body;
+  let db = MongoUtil.getDB();
+  //   Check if the email & password exists
+  if (!email || !password) {
+    return errorResponse(res, "Email and Password cannot be empty", 400);
   }
+
+  // Check if email and password is valid
+  const user = await db.collection("users").findOne({
+    email,
+    password,
+  });
+
+  if (!user) {
+    return errorResponse(res, "Incorrect email or password", 401);
+  }
+
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    token,
+  });
 };
+// catch (e) {
+//   res.status(500);
+//   res.send({
+//     error: "Internal server error. Please contact administrator",
+//   });
+//   console.log(e);
+// }
+// };
 
 // app.get("/user/:id", async (req, res, next) => {
 //   let user_id = req.params.id;
