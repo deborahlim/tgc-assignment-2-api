@@ -52,3 +52,36 @@ exports.createProfile = async (req, res, next) => {
     console.log(e);
   }
 };
+
+exports.loadMatches = async function (req, res, next) {
+  try {
+    let user_id = req.params.id;
+    let db = MongoUtil.getDB();
+    let criteria = {};
+    console.log(user_id);
+
+    let result = await db
+      .collection("users")
+      .find({
+        _id: ObjectId(user_id),
+      })
+      .toArray();
+    // Match on disability preference, disability, country, country preference, min and max age, interests
+    // Exclude the current user
+    let matches = await db
+      .collection("users")
+      .find({
+        "profile.disabilityPreference": result[0].profile.disabilityPreference,
+      })
+      .toArray();
+    console.log(matches);
+    res.status(200);
+    res.send(matches);
+  } catch (e) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+    console.log(e);
+  }
+};
