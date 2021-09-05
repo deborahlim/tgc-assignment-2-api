@@ -1,6 +1,6 @@
 // Handle errors appropriately
 exports.errorResponse = (res, message, statusCode = 500, error = {}) => {
-  res.status(statusCode).json({
+  res.status(statusCode).send({
     success: false,
     message,
     error: {

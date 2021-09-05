@@ -16,7 +16,7 @@ exports.createProfile = async (req, res, next) => {
     let disabilityPreference = req.body.disabilityPreference;
     let aboutMe = req.body.aboutMe;
     let interests = req.body.interests;
-
+    let photoURL = req.body.photoURL;
     let db = MongoUtil.getDB();
     // tell mongo to insert the document
     let result = await db.collection("users").updateOne(
@@ -38,6 +38,7 @@ exports.createProfile = async (req, res, next) => {
             disabilityPreference: disabilityPreference,
             aboutMe: aboutMe,
             interests: interests,
+            photoURL: photoURL,
           },
         },
       }
@@ -74,7 +75,6 @@ exports.loadMatches = async function (req, res, next) {
         "profile.disabilityPreference": result[0].profile.disabilityPreference,
       })
       .toArray();
-    console.log(matches);
     res.status(200);
     res.send(matches);
   } catch (e) {
