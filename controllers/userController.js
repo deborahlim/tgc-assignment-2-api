@@ -72,11 +72,27 @@ exports.loadMatches = async function (req, res, next) {
     let matches = await db
       .collection("users")
       .find({
-        "profile.disabilityPreference": result[0].profile.disabilityPreference,
+        "profile.disabilityPreference": result[0].profile.disability,
       })
       .toArray();
     res.status(200);
     res.send(matches);
+  } catch (e) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+    console.log(e);
+  }
+};
+
+exports.browseAllUsers = async (req, res, next) => {
+  try {
+    let db = MongoUtil.getDB();
+    let result = await db.collection("users").find({}).toArray();
+
+    res.status(200);
+    res.send(result);
   } catch (e) {
     res.status(500);
     res.send({

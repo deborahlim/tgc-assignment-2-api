@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
       email,
       password,
     });
-
+    console.log(user);
     if (!user) {
       return errorResponse(res, "Incorrect email or password", 401);
     }
