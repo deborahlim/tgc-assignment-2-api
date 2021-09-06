@@ -4,7 +4,11 @@ const ObjectId = require("mongodb").ObjectId;
 
 exports.createProfile = async (req, res, next) => {
   try {
-    let dob = req.body.dob;
+    let dob = new Date(req.body.dob);
+    let month_diff = Date.now() - dob.getTime();
+    let age_dt = new Date(month_diff);
+    let year = age_dt.getUTCFullYear();
+    let age = Math.abs(year - 1970);
     let gender = req.body.gender;
     let country = req.body.country;
     let disability = req.body.disability;
@@ -16,7 +20,7 @@ exports.createProfile = async (req, res, next) => {
     let disabilityPreference = req.body.disabilityPreference;
     let aboutMe = req.body.aboutMe;
     let interests = req.body.interests;
-    let photoURL = req.body.photoURL;
+    let photoURL = req.body.photoURL || "";
     let db = MongoUtil.getDB();
     // tell mongo to insert the document
     let result = await db.collection("users").updateOne(
@@ -27,6 +31,7 @@ exports.createProfile = async (req, res, next) => {
         $set: {
           profile: {
             dob: dob,
+            age: age,
             gender: gender,
             country: country,
             disability: disability,
@@ -67,12 +72,23 @@ exports.loadMatches = async function (req, res, next) {
         _id: ObjectId(user_id),
       })
       .toArray();
+    let resultProfile;
+    if (result[0].profile) {
+      resultProfile = result[0].profile;
+    } else {
+      throw new Error("Create your profile!");
+    }
     // Match on disability preference, disability, country, country preference, min and max age, interests
     // Exclude the current user
     let matches = await db
       .collection("users")
       .find({
-        "profile.disabilityPreference": result[0].profile.disability,
+        "profile.disability": resultProfile.disabilityPreference,
+        "profile.minAge": { $gte: resultProfile.minAge },
+        "profile.maxAge": { $lt: resultProfile.maxAge },
+        "profile.country": resultProfile.countryPreference,
+        "profile.interests": { $in: resultProfile.interests },
+        "profile.gender": { $in: resultProfile.genderPreference },
       })
       .toArray();
     res.status(200);
@@ -80,7 +96,7 @@ exports.loadMatches = async function (req, res, next) {
   } catch (e) {
     res.status(500);
     res.send({
-      error: "Internal server error. Please contact administrator",
+      error: e.message || "Internal server error. Please contact administrator",
     });
     console.log(e);
   }
@@ -90,9 +106,11 @@ exports.browseAllUsers = async (req, res, next) => {
   try {
     let db = MongoUtil.getDB();
     let result = await db.collection("users").find({}).toArray();
-
+    console.log(result);
+    const filteredResults = result.filter((user) => user.profile !== undefined);
+    console.log(filteredResults);
     res.status(200);
-    res.send(result);
+    res.send(filteredResults);
   } catch (e) {
     res.status(500);
     res.send({
