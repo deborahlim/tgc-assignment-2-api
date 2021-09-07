@@ -15,7 +15,9 @@ app.use(cors());
 async function main() {
   await MongoUtil.connect(mongoUri, "special-connections");
   const userRouter = require("./routes/userRoutes");
+  const enquiryRouter = require("./routes/enquiryRoutes");
   app.use("/special-connections/users", userRouter);
+  app.use("/special-connections/enquiry", enquiryRouter);
   // https://blog.idrisolubisi.com/global-error-handling-in-node-js
   // This should be the last route else any after it wont work
   // app.use("*", (req, res) => {
