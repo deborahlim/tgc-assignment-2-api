@@ -66,31 +66,27 @@ exports.loadMatches = async function (req, res, next) {
     let criteria = {};
     console.log(user_id);
 
-    let result = await db
-      .collection("users")
-      .find({
-        _id: ObjectId(user_id),
-      })
-      .toArray();
+    let result = await db.collection("users").findOne({
+      _id: ObjectId(user_id),
+    });
+
     let resultProfile;
-    if (result[0].profile) {
-      resultProfile = result[0].profile;
+    if (result.profile) {
+      resultProfile = result.profile;
     } else {
       throw new Error("Create your profile!");
     }
     // Match on disability preference, disability, country, country preference, min and max age, interests
     // Exclude the current user
-    let matches = await db
-      .collection("users")
-      .find({
+    let matches =
+      (await db.collection("users").findOne({
         "profile.disability": resultProfile.disabilityPreference,
         "profile.minAge": { $gte: resultProfile.minAge },
         "profile.maxAge": { $lt: resultProfile.maxAge },
         "profile.country": resultProfile.countryPreference,
         "profile.interests": { $in: resultProfile.interests },
         "profile.gender": { $in: resultProfile.genderPreference },
-      })
-      .toArray();
+      })) || [];
     res.status(200);
     res.send(matches);
   } catch (e) {
@@ -189,7 +185,7 @@ exports.updateProfile = async function (req, res) {
       {
         $set: {
           profile: {
-            dob: dob,
+            dob: req.body.dob,
             age: age,
             gender: gender,
             country: country,
