@@ -30,7 +30,7 @@ exports.createProfile = async (req, res, next) => {
       {
         $set: {
           profile: {
-            dob: dob,
+            dob: req.body.dob,
             age: age,
             gender: gender,
             country: country,
@@ -217,9 +217,13 @@ exports.updateProfile = async function (req, res) {
 
 exports.deleteProfile = async function (req, res) {
   try {
-    let results = await db.collection("users").deleteOne({
-      _id: ObjectId(req.params.id),
-    });
+    let results = await db.collection("users").updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      { $unset: { profile: "" } }
+    );
+    console.log(results);
     res.status(200);
     res.send({ message: "OK" });
   } catch (e) {
