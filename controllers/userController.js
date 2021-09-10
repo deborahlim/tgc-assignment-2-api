@@ -142,6 +142,24 @@ exports.writeReview = async (req, res, next) => {
   }
 };
 
+exports.loadReviews = async function (req, res) {
+  try {
+    let db = MongoUtil.getDB();
+    let reviews = await db
+      .collection("users")
+      .find({
+        review: { $exists: true },
+      })
+      .toArray();
+    res.status(200).send(reviews);
+  } catch (e) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+  }
+};
+
 exports.getProfile = async function (req, res) {
   try {
     let db = MongoUtil.getDB();

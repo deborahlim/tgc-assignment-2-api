@@ -25,10 +25,16 @@ exports.sendEnquiry = async (req, res, next) => {
   }
 };
 
-// exports.loadEnquiries = (req, res, next) => {
-//     try{
-// let enquires =
-//     } catch(e) {
-
-//     }
-// }
+exports.loadEnquiries = async (req, res, next) => {
+  try {
+    let db = MongoUtil.getDB();
+    let enquires = await db.collection("enquiries").find().toArray();
+    res.status(200).send(enquires);
+  } catch (e) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+    console.log(e);
+  }
+};

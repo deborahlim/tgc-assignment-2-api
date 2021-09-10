@@ -15,6 +15,7 @@ router.delete("/profile/:id", userController.deleteProfile);
 
 router.get("/", userController.browseAllUsers);
 router.get("/:id", userController.loadMatches);
-router.get("/reviews/:id", userController.writeReview);
+router.get("/reviews/reviews/reviews", userController.loadReviews);
+router.patch("/reviews/:id", userController.writeReview);
 
 module.exports = router;
