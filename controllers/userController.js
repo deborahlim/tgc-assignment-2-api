@@ -63,7 +63,6 @@ exports.loadMatches = async function (req, res, next) {
   try {
     let user_id = req.params.id;
     let db = MongoUtil.getDB();
-    let criteria = {};
     console.log(user_id);
 
     let result = await db.collection("users").findOne({
@@ -74,7 +73,8 @@ exports.loadMatches = async function (req, res, next) {
     if (result.profile) {
       resultProfile = result.profile;
     } else {
-      throw new Error("Create your profile!");
+      res.status(404);
+      return res.send();
     }
     // Match on disability preference, disability, country, country preference, min and max age, interests
     // Exclude the current user

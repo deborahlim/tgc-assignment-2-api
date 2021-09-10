@@ -25,6 +25,26 @@ exports.joinUs = async (req, res, next) => {
     let datetime = new Date();
     let db = MongoUtil.getDB();
     // tell mongo to insert the document
+    let checkValidEmail = await db.collection("users").findOne({
+      email: email,
+    });
+    let checkValidUsername = await db.collection("users").findOne({
+      username: username,
+    });
+    if (checkValidEmail !== null && checkValidUsername !== null) {
+      console.log("email" + checkValidEmail);
+      console.log("username" + checkValidUsername);
+      return errorResponse(
+        res,
+        "The email and username provided already exists",
+        401
+      );
+    } else if (checkValidEmail !== null) {
+      return errorResponse(res, "The email provided already exists", 406);
+    } else if (checkValidUsername !== null) {
+      return errorResponse(res, "The username provided already exists", 409);
+    }
+
     let result = await db.collection("users").insertOne({
       username: username,
       email: email,
