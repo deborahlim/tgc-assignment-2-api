@@ -102,7 +102,7 @@ exports.browseAllUsers = async (req, res, next) => {
   try {
     let db = MongoUtil.getDB();
     let result = await db.collection("users").find({}).toArray();
-    console.log(result);
+
     const filteredResults = result.filter((user) => user.profile !== undefined);
     console.log(filteredResults);
     res.status(200);
