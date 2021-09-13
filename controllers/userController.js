@@ -71,12 +71,22 @@ exports.loadMatches = async function (req, res, next) {
     if (!result.profile) {
       return errorResponse(res, "Create a profile to see your matches", 401);
     }
-    const resultProfile = result.profile;
+    const userProfile = result.profile;
     let criteria = {
+      // exclude current user
       _id: { $not: { $eq: ObjectId(user_id) } },
-      "profile.age": { $gte: resultProfile.minAge },
-      "profile.age": { $lt: resultProfile.maxAge },
-      "profile.gender": { $in: resultProfile.genderPreference },
+      // match age preferences
+      "profile.age": {
+        $gte: userProfile.minAge,
+        $lt: userProfile.maxAge,
+      },
+      "profile.minAge": { $lt: userProfile.age },
+      "profile.maxAge": { $gte: userProfile.age },
+      // match genderPreference
+      "profile.gender": { $in: userProfile.genderPreference },
+      "profile.genderPreference": userProfile.gender,
+      // match interested in
+      "profile.interestedIn": { $in: userProfile.interestedIn },
     };
 
     let matches = await db.collection("users").find(criteria).toArray();
