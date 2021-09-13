@@ -63,32 +63,24 @@ exports.loadMatches = async function (req, res, next) {
   try {
     let user_id = req.params.id;
     let db = MongoUtil.getDB();
-    console.log(user_id);
 
     let result = await db.collection("users").findOne({
       _id: ObjectId(user_id),
     });
 
-    let resultProfile;
-    if (result.profile) {
-      resultProfile = result.profile;
-    } else {
-      res.status(404);
-      return res.send();
+    if (!result.profile) {
+      return errorResponse(res, "Create a profile to see your matches", 401);
     }
-    // Match on disability preference, disability, country, country preference, min and max age, interests
-    // Exclude the current user
-    let matches =
-      (await db.collection("users").findOne({
-        "profile.disability": resultProfile.disabilityPreference,
-        "profile.minAge": { $gte: resultProfile.minAge },
-        "profile.maxAge": { $lt: resultProfile.maxAge },
-        "profile.country": resultProfile.countryPreference,
-        "profile.interests": { $in: resultProfile.interests },
-        "profile.gender": { $in: resultProfile.genderPreference },
-      })) || [];
-    res.status(200);
-    res.send(matches);
+    const resultProfile = result.profile;
+    let criteria = {
+      _id: { $not: { $eq: ObjectId(user_id) } },
+      "profile.age": { $gte: resultProfile.minAge },
+      "profile.age": { $lt: resultProfile.maxAge },
+      "profile.gender": { $in: resultProfile.genderPreference },
+    };
+
+    let matches = await db.collection("users").find(criteria).toArray();
+    res.status(200).send(matches);
   } catch (e) {
     res.status(500);
     res.send({
@@ -101,10 +93,12 @@ exports.loadMatches = async function (req, res, next) {
 exports.browseAllUsers = async (req, res, next) => {
   try {
     let db = MongoUtil.getDB();
-    let result = await db.collection("users").find({}).toArray();
-
+    let user_id = req.body["_id"];
+    console.log(user_id);
+    // const query = { _id: { $not: { $eq: ObjectId(user_id) } } };
+    const query = { _id: { $ne: ObjectId(user_id) } };
+    let result = await db.collection("users").find(query).toArray();
     const filteredResults = result.filter((user) => user.profile !== undefined);
-    console.log(filteredResults);
     res.status(200);
     res.send(filteredResults);
   } catch (e) {
