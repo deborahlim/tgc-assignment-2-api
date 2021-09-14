@@ -104,7 +104,6 @@ exports.browseAllUsers = async (req, res, next) => {
   try {
     let db = MongoUtil.getDB();
     let user_id = req.body["_id"];
-    console.log(user_id);
     // const query = { _id: { $not: { $eq: ObjectId(user_id) } } };
     const query = { _id: { $ne: ObjectId(user_id) } };
     let result = await db.collection("users").find(query).toArray();
@@ -245,7 +244,7 @@ exports.deleteProfile = async function (req, res) {
       },
       { $unset: { profile: "" } }
     );
-    console.log(results);
+
     res.status(200);
     res.send({ message: "OK" });
   } catch (e) {

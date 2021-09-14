@@ -7,7 +7,12 @@ const { Db } = require("mongodb");
 const mongoUri = process.env.MONGO_URI;
 
 let app = express();
-
+const httpServer = require("http").createServer(app);
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "http://localhost:8080",
+  },
+});
 // !! ENABLE JSON
 app.use(express.json());
 // !! ENABLE CROSS ORIGIN RESOURCES SHARING
@@ -18,6 +23,36 @@ async function main() {
   const enquiryRouter = require("./routes/enquiryRoutes");
   app.use("/special-connections/users", userRouter);
   app.use("/special-connections/enquiry", enquiryRouter);
+
+  // io.use((socket, next) => {
+  //   const id = socket.handshake.auth.id;
+  //   console.log(id);
+  //   if (!id) {
+  //     return next(new Error("invalid id"));
+  //   }
+  //   socket.id = id;
+  //   next();
+  // });
+
+  io.on("connection", (socket) => {
+    console.log(`a user connected ${socket.id}`);
+    socket.join(socket.id);
+    socket.on("private message", ({ input, to, from }) => {
+      console.log(input, to, from);
+      socket.broadcast.emit("receive message", {
+        input,
+        to,
+        from,
+        fromSelf: false,
+      });
+    });
+    // notify users upon disconnection
+    socket.on("disconnect", () => {
+      socket.to(socket.id).emit("user disconnected", socket.id);
+      console.log("a user disconnected");
+    });
+  });
+
   // https://blog.idrisolubisi.com/global-error-handling-in-node-js
   // This should be the last route else any after it wont work
   // app.use("*", (req, res) => {
@@ -32,7 +67,7 @@ async function main() {
   // });
 
   // START SERVER
-  app.listen(3000, () => {
+  httpServer.listen(3000, () => {
     console.log("Server has started");
   });
 }
