@@ -36,23 +36,44 @@ async function main() {
 
   io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
-    socket.join(socket.id);
-    socket.on("private message", ({ input, to, from }) => {
-      console.log(input, to, from);
-      socket.broadcast.emit("receive message", {
-        input,
-        to,
-        from,
-        fromSelf: false,
+    // socket.join("gem");
+    // console.log(socket.rooms);
+
+    // https://dev.to/chewypao/private-chat-using-socket-io-39o5
+    socket.on("join", (room) => {
+      let split = room.split("--with--"); // ['username2', 'username1']
+      let unique = [...new Set(split)].sort((a, b) => (a < b ? -1 : 1)); // ['username1', 'username2']
+      let updatedRoomName = `${unique[0]}--with--${unique[1]}`; // 'username1--with--username2'
+      Array.from(socket.rooms)
+        .filter((it) => it !== socket.id)
+        .forEach((id) => {
+          socket.leave(id);
+          socket.removeAllListeners(`emitMessage`);
+        });
+
+      socket.join(updatedRoomName);
+      console.log(socket.rooms);
+      socket.on("private message", ({ input, to, from }) => {
+        console.log(input, to, from);
+        Array.from(socket.rooms)
+          .filter((it) => it !== socket.id)
+          .forEach((id) => {
+            socket.to(id).emit("receive message", {
+              input,
+              to,
+              from,
+              fromSelf: false,
+            });
+          });
+      });
+
+      // notify users upon disconnection
+      socket.on("disconnect", () => {
+        socket.removeAllListeners();
+        console.log("user disconnected, ", socket.id);
       });
     });
-    // notify users upon disconnection
-    socket.on("disconnect", () => {
-      socket.to(socket.id).emit("user disconnected", socket.id);
-      console.log("a user disconnected");
-    });
   });
-
   // https://blog.idrisolubisi.com/global-error-handling-in-node-js
   // This should be the last route else any after it wont work
   // app.use("*", (req, res) => {
