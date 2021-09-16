@@ -168,8 +168,8 @@ exports.getProfile = async function (req, res) {
     let db = MongoUtil.getDB();
     let result = await db
       .collection("users")
-      .find({ _id: ObjectId(req.params.id) })
-      .toArray();
+      .findOne({ _id: ObjectId(req.params.id) });
+
     res.status(200);
     res.send(result);
   } catch (e) {
