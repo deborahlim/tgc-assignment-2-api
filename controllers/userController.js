@@ -1,9 +1,23 @@
 const MongoUtil = require("../MongoUtil");
 let db = MongoUtil.getDB();
 const ObjectId = require("mongodb").ObjectId;
-
+const { errorResponse } = require("./../utils/errorMiddleware");
 exports.createProfile = async (req, res, next) => {
   try {
+    for (let prop in req.body) {
+      console.log(prop);
+      if (
+        req.body[prop] === "" ||
+        req.body[prop] === [] ||
+        req.body[prop] === "Please Select"
+      ) {
+        return errorResponse(
+          res,
+          "One or more of the fields are not filled up",
+          400
+        );
+      }
+    }
     let dob = new Date(req.body.dob);
     let month_diff = Date.now() - dob.getTime();
     let age_dt = new Date(month_diff);
@@ -183,6 +197,7 @@ exports.getProfile = async function (req, res) {
 
 exports.updateProfile = async function (req, res) {
   try {
+    console.log(req.body);
     let db = MongoUtil.getDB();
     let dob = new Date(req.body.dob);
     let month_diff = Date.now() - dob.getTime();
