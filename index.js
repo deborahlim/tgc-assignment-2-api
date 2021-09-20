@@ -5,7 +5,7 @@ require("dotenv").config();
 const MongoUtil = require("./MongoUtil");
 const { Db } = require("mongodb");
 const mongoUri = process.env.MONGO_URI;
-
+let db = MongoUtil.getDB();
 let app = express();
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
@@ -21,8 +21,10 @@ async function main() {
   await MongoUtil.connect(mongoUri, "special-connections");
   const userRouter = require("./routes/userRoutes");
   const enquiryRouter = require("./routes/enquiryRoutes");
+  const chatsRouter = require("./routes/chatsRoutes");
   app.use("/special-connections/users", userRouter);
   app.use("/special-connections/enquiry", enquiryRouter);
+  app.use("/special-connections/chats", chatsRouter);
 
   // io.use((socket, next) => {
   //   const id = socket.handshake.auth.id;
@@ -40,10 +42,12 @@ async function main() {
     // console.log(socket.rooms);
 
     // https://dev.to/chewypao/private-chat-using-socket-io-39o5
-    socket.on("join", (room) => {
+    // On receiving join event
+    socket.on("join", async (room) => {
       let split = room.split("--with--"); // ['username2', 'username1']
       let unique = [...new Set(split)].sort((a, b) => (a < b ? -1 : 1)); // ['username1', 'username2']
       let updatedRoomName = `${unique[0]}--with--${unique[1]}`; // 'username1--with--username2'
+
       Array.from(socket.rooms)
         .filter((it) => it !== socket.id)
         .forEach((id) => {
@@ -52,7 +56,9 @@ async function main() {
         });
 
       socket.join(updatedRoomName);
-      console.log(socket.rooms);
+      socket.emit("joined", updatedRoomName);
+
+      // On receving private message event
       socket.on("private message", ({ input, to, from }) => {
         console.log(input, to, from);
         Array.from(socket.rooms)
