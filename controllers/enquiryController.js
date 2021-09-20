@@ -1,5 +1,4 @@
 const MongoUtil = require("../MongoUtil");
-let db = MongoUtil.getDB();
 
 exports.sendEnquiry = async (req, res, next) => {
   try {

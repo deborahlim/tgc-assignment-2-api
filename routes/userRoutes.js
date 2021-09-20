@@ -10,7 +10,6 @@ router.post("/login", authController.login);
 
 router.patch("/profile/:id", userController.createProfile);
 router.get("/profile/:id", userController.getProfile);
-router.put("/profile/:id", userController.updateProfile);
 router.delete("/profile/:id", userController.deleteProfile);
 
 router.get("/", userController.browseAllUsers);

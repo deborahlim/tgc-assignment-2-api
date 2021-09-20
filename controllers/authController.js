@@ -10,11 +10,6 @@ const signToken = (id) => {
   });
 };
 
-exports.roots = async (req, res, next) => {
-  console.log("Root");
-  res.send();
-};
-
 // CREATE A USER
 exports.joinUs = async (req, res, next) => {
   try {
