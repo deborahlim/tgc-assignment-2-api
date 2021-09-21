@@ -20,7 +20,7 @@ exports.loadChats = async function (req, res) {
   }
 };
 
-exports.updateChats = async function (req, res) {
+exports.createChats = async function (req, res) {
   try {
     let { room, messages } = req.body;
     let db = MongoUtil.getDB();
@@ -29,6 +29,25 @@ exports.updateChats = async function (req, res) {
       room: room,
       messages: messages,
     });
+
+    res.status(200).send(result);
+  } catch (e) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+    console.log(e);
+  }
+};
+
+exports.updateChats = async function (req, res) {
+  try {
+    let { room, messages } = req.body;
+    let db = MongoUtil.getDB();
+    console.log("updated", room);
+    let result = await db
+      .collection("chats")
+      .updateOne({ room: room }, { $push: { messages } });
 
     res.status(200).send(result);
   } catch (e) {

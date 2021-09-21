@@ -68,7 +68,6 @@ async function main() {
               input,
               to,
               from,
-              fromSelf: false,
             });
           });
       });
