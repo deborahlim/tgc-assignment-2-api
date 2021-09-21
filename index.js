@@ -38,8 +38,6 @@ async function main() {
 
   io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
-    // socket.join("gem");
-    // console.log(socket.rooms);
 
     // https://dev.to/chewypao/private-chat-using-socket-io-39o5
     // On receiving join event
@@ -81,16 +79,16 @@ async function main() {
   });
   // https://blog.idrisolubisi.com/global-error-handling-in-node-js
   // This should be the last route else any after it wont work
-  // app.use("*", (req, res) => {
-  //   res.status(404).json({
-  //     success: "false",
-  //     message: "Page not found",
-  //     error: {
-  //       statusCode: 404,
-  //       message: "You reached a route that is not defined on this server",
-  //     },
-  //   });
-  // });
+  app.use("*", (req, res) => {
+    res.status(404).json({
+      success: "false",
+      message: "Page not found",
+      error: {
+        statusCode: 404,
+        message: "You reached a route that is not defined on this server",
+      },
+    });
+  });
 
   // START SERVER
   httpServer.listen(3000, () => {
