@@ -98,3 +98,56 @@ exports.login = async (req, res) => {
     console.log(e);
   }
 };
+
+// UPDATE PASSWORD
+exports.updatePassword = async (req, res) => {
+  try {
+    let db = MongoUtil.getDB();
+    let id = req.params.id;
+    let { password, confirmPassword, currentPassword } = req.body;
+    console.log(password, confirmPassword);
+    let user = await db.collection("users").findOne({
+      password: currentPassword,
+    });
+    if (!user) {
+      return errorResponse(res, "Your current password is wrong", 401);
+    }
+    console.log(user);
+    let response = await db.collection("users").updateOne(
+      { _id: ObjectId(req.params.id) },
+      {
+        $set: {
+          password: password,
+          confirmPassword: confirmPassword,
+        },
+      }
+    );
+    res.status(201).send(response);
+  } catch (err) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+    console.log(e);
+  }
+};
+
+// DELETE USER
+exports.deleteUser = async (req, res) => {
+  try {
+    let db = MongoUtil.getDB();
+
+    db.collection("users").deleteOne({
+      _id: ObjectId(req.params.id),
+    });
+
+    res.status(200);
+    res.send({ message: "OK" });
+  } catch (err) {
+    res.status(500);
+    res.send({
+      error: "Internal server error. Please contact administrator",
+    });
+    console.log(e);
+  }
+};

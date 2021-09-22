@@ -2,11 +2,12 @@ const MongoUtil = require("../MongoUtil");
 let db = MongoUtil.getDB();
 const ObjectId = require("mongodb").ObjectId;
 const { errorResponse } = require("./../utils/errorMiddleware");
-exports.createProfile = async (req, res, next) => {
+exports.createProfile = async (req, res) => {
   try {
     for (let prop in req.body) {
       console.log(prop);
       if (
+        req.body[prop] === null ||
         req.body[prop] === "" ||
         req.body[prop] === [] ||
         req.body[prop] === "Please Select"
@@ -136,7 +137,7 @@ exports.browseAllUsers = async (req, res) => {
   }
 };
 
-exports.writeReview = async (req, res, next) => {
+exports.writeReview = async (req, res) => {
   try {
     let db = MongoUtil.getDB();
     let review = req.body.review;
