@@ -86,7 +86,7 @@ async function main() {
   });
 
   // START SERVER
-  httpServer.listen(3000, () => {
+  httpServer.listen(process.env.PORT, () => {
     console.log("Server has started");
   });
 }
