@@ -26,15 +26,10 @@ async function main() {
   app.use("/special-connections/enquiry", enquiryRouter);
   app.use("/special-connections/chats", chatsRouter);
 
-  // io.use((socket, next) => {
-  //   const id = socket.handshake.auth.id;
-  //   console.log(id);
-  //   if (!id) {
-  //     return next(new Error("invalid id"));
-  //   }
-  //   socket.id = id;
-  //   next();
-  // });
+  // Check API is working
+  app.get("/", (req, res) => {
+    res.status(200).send("tgc-assignment-2-api");
+  });
 
   io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
