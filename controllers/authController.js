@@ -27,8 +27,6 @@ exports.joinUs = async (req, res, next) => {
       username: username,
     });
     if (checkValidEmail !== null && checkValidUsername !== null) {
-      console.log("email" + checkValidEmail);
-      console.log("username" + checkValidUsername);
       return errorResponse(
         res,
         "The email and username provided already exists",
@@ -105,14 +103,12 @@ exports.updatePassword = async (req, res) => {
     let db = MongoUtil.getDB();
     let id = req.params.id;
     let { password, confirmPassword, currentPassword } = req.body;
-    console.log(password, confirmPassword);
     let user = await db.collection("users").findOne({
       password: currentPassword,
     });
     if (!user) {
       return errorResponse(res, "Your current password is wrong", 401);
     }
-    console.log(user);
     let response = await db.collection("users").updateOne(
       { _id: ObjectId(req.params.id) },
       {
