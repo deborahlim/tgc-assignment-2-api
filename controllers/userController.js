@@ -1,10 +1,11 @@
 const MongoUtil = require("../MongoUtil");
 const ObjectId = require("mongodb").ObjectId;
 const { errorResponse } = require("./../utils/errorMiddleware");
-exports.createProfile = async (req, res) => {
+
+// Create User Profile
+exports.createProfile = async (req, res) => {                                                 
   try {
     for (let prop in req.body) {
-      console.log(prop);
       if (
         req.body[prop] === null ||
         req.body[prop] === "" ||
@@ -19,16 +20,16 @@ exports.createProfile = async (req, res) => {
       }
     }
     let dob = new Date(req.body.dob);
-    let month_diff = Date.now() - dob.getTime();
+    let month_diff = Date.now() - dob.getTime();                                                                                                                                    
     let age_dt = new Date(month_diff);
     let year = age_dt.getUTCFullYear();
     let age = Math.abs(year - 1970);
     let gender = req.body.gender;
-    let country = req.body.country;
-    let disability = req.body.disability;
+    let country = req.body.country;            
+    let disability = req.body.disability;             
     let interestedIn = req.body.interestedIn;
     let genderPreference = req.body.genderPreference;
-    let minAge = req.body.minAge;
+    let minAge = req.body.minAge;       
     let maxAge = req.body.maxAge;
     let countryPreference = req.body.countryPreference;
     let disabilityPreference = req.body.disabilityPreference;
@@ -73,10 +74,10 @@ exports.createProfile = async (req, res) => {
   }
 };
 
+// Load User Profile Matches
 exports.loadMatches = async function (req, res) {
   try {
     let user_id = req.params.id;
-    console.log(user_id);
     let db = MongoUtil.getDB();
 
     let result = await db.collection("users").findOne({
@@ -115,14 +116,13 @@ exports.loadMatches = async function (req, res) {
   }
 };
 
+// Display all users with profiles
 exports.browseAllUsers = async (req, res) => {
   try {
     let db = MongoUtil.getDB();
     let user_id = req.query["_id"];
-    console.log(user_id);
     const query = { _id: { $not: { $eq: ObjectId(user_id) } } };
     // const query = { _id: { $ne: ObjectId(user_id) } };
-    console.log(query);
     let result = await db.collection("users").find(query).toArray();
     const filteredResults = result.filter((user) => user.profile !== undefined);
     res.status(200);
@@ -136,6 +136,7 @@ exports.browseAllUsers = async (req, res) => {
   }
 };
 
+// Write a review, only avaliable afer creating an account
 exports.writeReview = async (req, res) => {
   try {
     let db = MongoUtil.getDB();
@@ -161,7 +162,7 @@ exports.writeReview = async (req, res) => {
     console.log(e);
   }
 };
-
+// Display all user reviews
 exports.loadReviews = async function (req, res) {
   try {
     let db = MongoUtil.getDB();
@@ -180,6 +181,7 @@ exports.loadReviews = async function (req, res) {
   }
 };
 
+// Display a user profile
 exports.getProfile = async function (req, res) {
   try {
     let db = MongoUtil.getDB();
@@ -198,8 +200,10 @@ exports.getProfile = async function (req, res) {
   }
 };
 
+// Delete User Profile
 exports.deleteProfile = async function (req, res) {
   try {
+    let db = MongoUtil.getDB();
     let results = await db.collection("users").updateOne(
       {
         _id: ObjectId(req.params.id),
