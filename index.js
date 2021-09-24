@@ -10,7 +10,7 @@ let app = express();
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "https://8080-magenta-llama-fajpx2jn.ws-us17.gitpod.io",
+    origin: "https://main--nostalgic-cray-7a084a.netlify.app/",
   },
 });
 // !! ENABLE JSON
