@@ -13,7 +13,7 @@ const io = require("socket.io")(httpServer, {
     origin: "https://main--nostalgic-cray-7a084a.netlify.app/",
   },
 });
-// !! ENABLE JSON
+
 app.use(express.json());
 // !! ENABLE CROSS ORIGIN RESOURCES SHARING
 app.use(cors());
