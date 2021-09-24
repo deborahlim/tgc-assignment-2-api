@@ -10,7 +10,7 @@ let app = express();
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "https://main--nostalgic-cray-7a084a.netlify.app",
+    origin: "https://nostalgic-cray-7a084a.netlify.app",
   },
 });
 
