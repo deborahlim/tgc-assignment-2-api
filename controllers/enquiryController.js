@@ -1,4 +1,5 @@
 const MongoUtil = require("../MongoUtil");
+const { errorResponse } = require("./../utils/errorMiddleware");
 
 exports.sendEnquiry = async (req, res, next) => {
   try {
@@ -16,11 +17,7 @@ exports.sendEnquiry = async (req, res, next) => {
       id: result.insertedId,
     });
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -30,10 +27,6 @@ exports.loadEnquiries = async (req, res, next) => {
     let enquires = await db.collection("enquiries").find().toArray();
     res.status(200).send(enquires);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };

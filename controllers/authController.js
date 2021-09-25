@@ -55,11 +55,7 @@ exports.joinUs = async (req, res, next) => {
       },
     });
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -89,11 +85,7 @@ exports.login = async (req, res) => {
       user,
     });
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -101,7 +93,6 @@ exports.login = async (req, res) => {
 exports.updatePassword = async (req, res) => {
   try {
     let db = MongoUtil.getDB();
-    let id = req.params.id;
     let { password, confirmPassword, currentPassword } = req.body;
     let user = await db.collection("users").findOne({
       password: currentPassword,
@@ -120,11 +111,7 @@ exports.updatePassword = async (req, res) => {
     );
     res.status(201).send(response);
   } catch (err) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -140,10 +127,6 @@ exports.deleteUser = async (req, res) => {
     res.status(200);
     res.send({ message: "OK" });
   } catch (err) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };

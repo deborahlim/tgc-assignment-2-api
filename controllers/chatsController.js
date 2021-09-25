@@ -1,4 +1,5 @@
 const MongoUtil = require("../MongoUtil");
+const { errorResponse } = require("../utils/errorMiddleware");
 
 exports.loadChats = async function (req, res) {
   try {
@@ -9,14 +10,9 @@ exports.loadChats = async function (req, res) {
     let result = await db.collection("chats").findOne({
       room: room,
     });
-
     res.status(200).send(result);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -24,19 +20,18 @@ exports.createChats = async function (req, res) {
   try {
     let { room, messages } = req.body;
     let db = MongoUtil.getDB();
+    let response = await db.collection("chats").findOne({ room: room });
+    if (!response) {
+      let result = await db.collection("chats").insertOne({
+        room: room,
+        messages: messages,
+      });
 
-    let result = await db.collection("chats").insertOne({
-      room: room,
-      messages: messages,
-    });
-
-    res.status(200).send(result);
+      res.status(200).send(results);
+    }
+    return errorResponse(res, "this room already exists", 400);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -60,10 +55,6 @@ exports.updateChats = async function (req, res) {
 
     res.status(200).send(response);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };

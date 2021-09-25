@@ -66,11 +66,7 @@ exports.createProfile = async (req, res) => {
     res.status(200);
     res.send(result);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -108,11 +104,7 @@ exports.loadMatches = async function (req, res) {
     let matches = await db.collection("users").find(criteria).toArray();
     res.status(200).send(matches);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: e.message || "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -128,11 +120,7 @@ exports.browseAllUsers = async (req, res) => {
     res.status(200);
     res.send(filteredResults);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -155,11 +143,7 @@ exports.writeReview = async (req, res) => {
     res.status(201);
     res.send(result);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 // Display all user reviews
@@ -174,10 +158,7 @@ exports.loadReviews = async function (req, res) {
       .toArray();
     res.status(200).send(reviews);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
+    return errorResponse(res);
   }
 };
 
@@ -192,11 +173,7 @@ exports.getProfile = async function (req, res) {
     res.status(200);
     res.send(result);
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };
 
@@ -214,10 +191,6 @@ exports.deleteProfile = async function (req, res) {
     res.status(200);
     res.send({ message: "OK" });
   } catch (e) {
-    res.status(500);
-    res.send({
-      error: "Internal server error. Please contact administrator",
-    });
-    console.log(e);
+    return errorResponse(res);
   }
 };

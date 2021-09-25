@@ -1,5 +1,5 @@
 // Handle errors appropriately
-exports.errorResponse = (res, message, statusCode = 500, error = {}) => {
+exports.errorResponse = (res, message = "Internal server error. Please contact administrator", statusCode = 500, error = {}) => {
   res.status(statusCode).send({
     success: false,
     message,
