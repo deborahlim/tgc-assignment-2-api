@@ -3,8 +3,12 @@ const ObjectId = require("mongodb").ObjectId;
 const { errorResponse } = require("./../utils/errorMiddleware");
 
 // Create User Profile
-exports.createProfile = async (req, res) => {                                                 
+exports.createProfile = async (req, res) => {
   try {
+    if (!req.body) {
+      return errorResponse(res, "Request Body is empty", 400);
+    }
+
     for (let prop in req.body) {
       if (
         req.body[prop] === null ||
@@ -20,16 +24,16 @@ exports.createProfile = async (req, res) => {
       }
     }
     let dob = new Date(req.body.dob);
-    let month_diff = Date.now() - dob.getTime();                                                                                                                                    
+    let month_diff = Date.now() - dob.getTime();
     let age_dt = new Date(month_diff);
     let year = age_dt.getUTCFullYear();
     let age = Math.abs(year - 1970);
     let gender = req.body.gender;
-    let country = req.body.country;            
-    let disability = req.body.disability;             
+    let country = req.body.country;
+    let disability = req.body.disability;
     let interestedIn = req.body.interestedIn;
     let genderPreference = req.body.genderPreference;
-    let minAge = req.body.minAge;       
+    let minAge = req.body.minAge;
     let maxAge = req.body.maxAge;
     let countryPreference = req.body.countryPreference;
     let disabilityPreference = req.body.disabilityPreference;
@@ -154,7 +158,8 @@ exports.loadReviews = async function (req, res) {
       .collection("users")
       .find({
         review: { $exists: true },
-      }).project({username: 1, review: 1})
+      })
+      .project({ username: 1, review: 1 })
       .toArray();
     res.status(200).send(reviews);
   } catch (e) {

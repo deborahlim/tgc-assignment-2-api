@@ -33,7 +33,7 @@ User Goals:
 3. chats
    - <img width="268" alt="_id ObjectId(614d6dac85ec6e72710742d3)" src="https://user-images.githubusercontent.com/84578312/134799019-1b1edce2-061c-451b-9bdb-22388340f821.png">
 
-### C) Use Cases and Testing
+## C) Use Cases and Testing
 
 - Testing done on Postman
 - Users Collection: Account related requests
@@ -69,3 +69,25 @@ User Goals:
   | <br>Retrieving a document in the chats collection which match a room | <br>See messages between themselves and another user | <br>GET | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/chats?room=gordon--with--mary<br><br>room is added in the url as a query string | <br>{<br> "\_id": "614d6dac85ec6e72710742d3",<br> "room": "gordon--with--mary",<br> "messages": [<br> {<br> "input": "Hi gordon",<br> "from": "mary",<br> "to": "gordon"<br> },<br> {<br> "input": "Hi mary",<br> "from": "gordon",<br> "to": "mary"<br> }<br> ]<br>} |
   | <br>Adding a document to the chats collection | <br>Create a chat between themselves and another user | <br>POST | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/chats<br>Request body (JSON):<br>{<br> "room": "testroom",<br> "messages": [] <br>} | <br>{<br> "acknowledged": true,<br> "insertedId": "614ed9ab3988dff2f56f3e1d"<br>}<br>if room field value already exists:<br>{<br> "success": false,<br> "message": "this room already exists",<br> "error": {<br> "statusCode": 400,<br> "message": "this room already exists",<br> "error": {}<br> }<br>}<br> |
   | <br>Adding to the messages array for a specific document in the chats collection | <br>Save the messages sent from themselves and received from the other user | <br>PATCH | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/chats<br>Request body (JSON):<br> {<br> “room": "mary--with--simon",<br> “message": {<br> "input": “hi”,<br> "from": “mary”,<br> "to": “simon”<br> }<br> } | <br>{<br> "acknowledged": true,<br> "modifiedCount": 1,<br> "upsertedId": null,<br> "upsertedCount": 0,<br> "matchedCount": 1<br>}<br> |
+
+## Limitations / Furture Additions
+- Routes are not protected
+- Improve data validation before inserting into database
+
+## E) Technologies Used / Resources:
+- Socket Io (https://socket.io/docs/v4/ 
+- Mongo DB (https://docs.mongodb.com/drivers/node/current/ , https://account.mongodb.com/account/login?nds=true)
+- Express (https://expressjs.com/en/api.html)
+- Express router (https://expressjs.com/en/api.html#router)
+- Cors (https://www.npmjs.com/package/cors)
+- Dotenv (https://www.npmjs.com/package/dotenv)
+- Http-server (https://www.npmjs.com/package/http-server)
+- jsonwebtoken (https://www.npmjs.com/package/jsonwebtoken)
+
+Resources:
+- https://blog.idrisolubisi.com/global-error-handling-in-node-js (global error handling implementation)
+- https://dev.to/chewypao/private-chat-using-socket-io-39o5 (socket io private chat implementation)
+- https://blog.idrisolubisi.com/global-error-handling-in-node-js (errorMiddleware.js)
+- https://ardalis.com/add-images-easily-to-github/ (adding pictures to GitHub guide)
+
+
