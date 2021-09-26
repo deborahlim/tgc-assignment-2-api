@@ -154,7 +154,7 @@ exports.loadReviews = async function (req, res) {
       .collection("users")
       .find({
         review: { $exists: true },
-      })
+      }).project({username: 1, review: 1})
       .toArray();
     res.status(200).send(reviews);
   } catch (e) {
