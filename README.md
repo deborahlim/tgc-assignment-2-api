@@ -49,7 +49,9 @@ User Goals:
   |---|---|---|---|---|
   | <br>Adding / updating profile key to a specific document in users collection | <br>Create / Update a profile | <br>PATCH | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/users/profile/users/profile/:id<br>Request Body (JSON):<br>{<br> "dob": "1996/12/06”,<br> "gender":"male",<br> "country": "Singapore",<br> "disability": "Open To All Disabilities",<br> "interestedIn": ["dating"],<br> "genderPreference": ["male"],<br> "minAge": 23,<br> "maxAge": 35,<br> "countryPreference": "Singapore",<br> "disabilityPreference": "Physical Disability",<br> "aboutMe": "Hi",<br> "interests": ["reading"],<br> "photoURL": "https://images.unsplash.com/photo-1489980557514-251d61e3eeb6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"<br>} | <br>{<br> "acknowledged": true,<br> "modifiedCount": 1,<br> "upsertedId": null,<br> "upsertedCount": 0,<br> "matchedCount": 1<br>}<br>If any fields are left empty:<br>{<br> "success": false,<br> "message": "One or more of the fields are not filled up",<br> "error": {<br> "statusCode": 400,<br> "message": "One or more of the fields are not filled up",<br> "error": {}<br> }<br>} |
   | <br>Delete profile key from a specific document in users collection | <br>Delete a profile | <br>DELETE | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/users/profile/:id | <br>{<br> "message": "OK"<br>} |
-  | <br>Retrieve a document from the users collections | <br>View user profile | <br>GET | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/users/profile/:id | <br>{<br> "\_id": "613e1b630cd8d1324b5e74dc",<br> "username": "gordon",<br> "email": "gordon@gmail.com",<br> "password": "gordon1",<br> "confirmPassword": "gordon1",<br> "datetime": "2021-09-12T15:23:15.764Z",<br> "profile": {<br> "dob": "1990-11-29",<br> "age": 30,<br> "gender": "male",<br> "country": "United States",<br> "disability": "Mental Health Conditions",<br> "interestedIn": [<br> "dating"<br> ],<br> "genderPreference": [<br> "female"<br> ],<br> "minAge": 18,<br> "maxAge": 29,<br> "countryPreference": "United States",<br> "disabilityPreference": "Mental Health Conditions",<br> "aboutMe": "Hello, I love martial arts 👊",<br> "interests": [<br> "Brazilian jiu-jitsu"<br> ],<br> "photoURL": "https://images.unsplash.com/photo-1519058082700-08a0b56da9b4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80"<br> },<br> "review": "Great website for disabled people 😄🙌"<br>} |
+  | <br>Retrieve a document from the users collections | <br>View user profile | <br>GET | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/users/profile/:id | <br>{<br> "\_id": "613e1b630cd8d1324b5e74dc",<br> "username": "gordon",<br> "email": "gordon@gmail.com",<br> "password": "gordon1",<br> "confirmPassword": "gordon1",<br> "datetime": "2021-09-12T15:23:15.764Z",<br> "profile": {<br> "dob": "1990-11-29",<br> "age": 30,<br> "gender": "male",<br> "country": "United States",<br> "disability": "Mental Health Conditions",<br> "interestedIn": [<br> "dating"<br> ],<br> "genderPreference": [<br> "female"<br> ],<br> "minAge": 18,<br> "maxAge": 29,<br> "countryPreference": "United States",<br> "disabilityPreference": "Mental Health Conditions",<br> "aboutMe": "Hello, I love martial arts 👊",<br> "interests": [<br> "Brazilian jiu-jitsu"<br> ],<br> "photoURL": "https://images.unsplash.com/photo-1519058082700-08a0b56da9b4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80"<br> },<br> "review": "Great website for disabled people 😄🙌"<br>} | <br>Retrieve all documents in users collection with a profile field | <br>View all user profiles | <br>GET | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/users<br> | <br>Array of all documents in users collection with profile field |
+  |---|---|---|---|---|
+  | <br>Retrieve all documents which match user and other users age, gender and interested in preferences. | <br>View all profile matches | <br>GET | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/users/:id<br> | <br>Array of all documents in users collection which match age, gender and interested in preferences |
 
 - Users Collection : Review Related requests
   | <br>Use Case | <br>User Objective | <br>Request Type | <br>Request URL | <br>Sample Expected Result |
@@ -71,11 +73,13 @@ User Goals:
   | <br>Adding to the messages array for a specific document in the chats collection | <br>Save the messages sent from themselves and received from the other user | <br>PATCH | <br>https://dlhy-tgc-special-connections.herokuapp.com/special-connections/chats<br>Request body (JSON):<br> {<br> “room": "mary--with--simon",<br> “message": {<br> "input": “hi”,<br> "from": “mary”,<br> "to": “simon”<br> }<br> } | <br>{<br> "acknowledged": true,<br> "modifiedCount": 1,<br> "upsertedId": null,<br> "upsertedCount": 0,<br> "matchedCount": 1<br>}<br> |
 
 ## Limitations / Furture Additions
+
 - Routes are not protected
 - Improve data validation before inserting into database
 
 ## E) Technologies Used / Resources:
-- Socket Io (https://socket.io/docs/v4/ 
+
+- Socket Io (https://socket.io/docs/v4/
 - Mongo DB (https://docs.mongodb.com/drivers/node/current/ , https://account.mongodb.com/account/login?nds=true)
 - Express (https://expressjs.com/en/api.html)
 - Express router (https://expressjs.com/en/api.html#router)
@@ -85,9 +89,8 @@ User Goals:
 - jsonwebtoken (https://www.npmjs.com/package/jsonwebtoken)
 
 Resources:
+
 - https://blog.idrisolubisi.com/global-error-handling-in-node-js (global error handling implementation)
 - https://dev.to/chewypao/private-chat-using-socket-io-39o5 (socket io private chat implementation)
 - https://blog.idrisolubisi.com/global-error-handling-in-node-js (errorMiddleware.js)
 - https://ardalis.com/add-images-easily-to-github/ (adding pictures to GitHub guide)
-
-
